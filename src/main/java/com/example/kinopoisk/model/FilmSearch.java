@@ -1,6 +1,8 @@
 package com.example.kinopoisk.model;
 
 public class FilmSearch {
+    private Integer country;
+    private Integer genre;
     private Double ratingFrom;
     private Double ratingTo;
     private Integer yearFrom;
@@ -8,6 +10,22 @@ public class FilmSearch {
     private String imdbId;
     private String keyword;
     private Integer page;
+
+    public Integer getCountry() {
+        return country;
+    }
+
+    public void setCountry(Integer country) {
+        this.country = country;
+    }
+
+    public Integer getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Integer genre) {
+        this.genre = genre;
+    }
 
     public Double getRatingFrom() {
         return ratingFrom;

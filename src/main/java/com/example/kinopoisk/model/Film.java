@@ -7,65 +7,58 @@ import jakarta.persistence.*;
 public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Id")
+    private Long Id;
     @Column(name = "filmId")
-    Long filmId;
+    private Long kinopoiskId;
     @Column(name = "filmName")
-    String filmName;
+    private String nameRu;
     @Column(name = "year")
-    int year;
+    private int year;
     @Column(name = "rating")
-    double rating;
+    private double ratingKinopoisk;
     @Column(name = "description")
-    String description;
+    private String description;
     public Film(){
     }
-    public Film(String filmName, int year, double rating, String description) {
-        this.filmName = filmName;
-        this.year = year;
-        this.rating = rating;
-        this.description = description;
+
+    public Long getKinopoiskId() {
+        return kinopoiskId;
     }
 
-    public String getFilmName() {
-        return filmName;
+    public void setKinopoiskId(Long kinopoiskId) {
+        this.kinopoiskId = kinopoiskId;
+    }
+
+    public String getNameRu() {
+        return nameRu;
+    }
+
+    public void setNameRu(String nameRu) {
+        this.nameRu = nameRu;
     }
 
     public int getYear() {
         return year;
     }
 
-    public double getRating() {
-        return rating;
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public double getRatingKinopoisk() {
+        return ratingKinopoisk;
+    }
+
+    public void setRatingKinopoisk(double ratingKinopoisk) {
+        this.ratingKinopoisk = ratingKinopoisk;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setFilmName(String filmName) {
-        this.filmName = filmName;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public String toString() {
-        return "Film{" +
-                "filmId=" + filmId +
-                ", filmName='" + filmName + '\'' +
-                ", year='" + year + '\'' +
-                ", rating=" + rating +
-                ", description='" + description + '\'' +
-                '}';
     }
 }

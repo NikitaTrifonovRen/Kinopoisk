@@ -3,14 +3,15 @@ package com.example.kinopoisk.model;
 import java.util.List;
 
 public class Films {
-    private List<FilmMaping> items;
+    private List<Film> items;
     public Films(){
     }
-    public List<FilmMaping> getItems() {
+    public List<Film> getItems() {
         return items;
     }
 
-    public void setItems(List<FilmMaping> items) {
+
+    public void setItems(List<Film> items) {
         this.items = items;
     }
 
