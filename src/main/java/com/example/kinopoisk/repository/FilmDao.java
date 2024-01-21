@@ -14,7 +14,7 @@ public interface FilmDao extends JpaRepository<Film, Long> {
                                                                                         int yearFrom,
                                                                                         int yearTo,
                                                                                         Long kinopoiskId);
-    List<Film> findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(String nameRu,
+    List<Film> findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(String nameRu, Pageable pageable,
                                                                                            double ratingFrom,
                                                                                            double ratingTo,
                                                                                            int yearFrom,

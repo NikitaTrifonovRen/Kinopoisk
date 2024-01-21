@@ -2,6 +2,9 @@ package com.example.kinopoisk.model;
 
 import jakarta.persistence.*;
 
+
+
+
 @Entity
 @Table(name = "films")
 public class Film {

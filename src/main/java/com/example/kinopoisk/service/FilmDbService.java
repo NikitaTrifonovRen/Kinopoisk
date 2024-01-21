@@ -41,12 +41,12 @@ public class FilmDbService {
     }
 
     @Transactional
-    public List<Film> findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(String nameRu,
+    public List<Film> findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(String nameRu, Pageable pageable,
                                                                                     double ratingFrom,
                                                                                     double ratingTo,
                                                                                     int yearFrom,
                                                                                     int yearTo) {
-        return filmDao.findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(nameRu, ratingFrom,
+        return filmDao.findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(nameRu, pageable, ratingFrom,
                 ratingTo, yearFrom, yearTo);
     }
 

@@ -56,7 +56,7 @@ public class FilmsRestController {
     }
     @GetMapping(value = "/base")
     public List<Film> showFilmInDb(@RequestParam(value = "o",defaultValue = "ratingKinopoisk")String order,
-                                   @RequestParam(value = "pS",defaultValue = "5") int pageSize,
+                                   @RequestParam(value = "pS",defaultValue = "1") int pageSize,
                                    @RequestParam(value = "rF",defaultValue = "0")double ratingFrom,
                                    @RequestParam(value = "rT",defaultValue = "10")double ratingTo,
                                    @RequestParam(value = "yF",defaultValue = "0")int yearFrom,
@@ -64,7 +64,7 @@ public class FilmsRestController {
                                    @RequestParam(value = "i",required = false)Long kinopoiskId,
                                    @RequestParam(value = "k",required = false)String keyword,
                                    @RequestParam(value = "p",defaultValue = "1")int page){
-        List<Film> DbFilms = null;
+        List<Film> DbFilms;
         Optional<Long> checkId = Optional.ofNullable(kinopoiskId);
         Optional<String> checkKeyword = Optional.ofNullable(keyword);
         Pageable pageable = PageRequest.of(page,pageSize, Sort.by(order).descending());
@@ -79,7 +79,7 @@ public class FilmsRestController {
                     ratingTo, yearFrom, yearTo, kinopoiskId);
         }
         else if(checkKeyword.isPresent()){
-            DbFilms = filmDbService.findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(keyword,
+            DbFilms = filmDbService.findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(keyword, pageable,
                     ratingFrom,ratingTo,yearFrom,yearTo);
         }
         else {
