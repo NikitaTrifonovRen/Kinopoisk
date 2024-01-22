@@ -1,7 +1,11 @@
 package com.example.kinopoisk.model;
 
-import java.util.List;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
+import java.util.List;
+@XmlType(name = "films")
+@XmlRootElement
 public class Films {
     private List<Film> items;
     public Films(){

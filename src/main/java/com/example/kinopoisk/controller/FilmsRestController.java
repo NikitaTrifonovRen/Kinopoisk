@@ -4,18 +4,25 @@ import com.example.kinopoisk.model.Film;
 import com.example.kinopoisk.model.Films;
 import com.example.kinopoisk.service.FilmDbService;
 import com.example.kinopoisk.service.FilmSearchService;
+import com.example.kinopoisk.service.MailService;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
@@ -25,15 +32,9 @@ public class FilmsRestController {
     private FilmSearchService filmSearchService;
     @Autowired
     private FilmDbService filmDbService;
-    @GetMapping
-    public ResponseEntity getAllFilms(){
-        List<Film> filmList = filmSearchService.getAllFilms().getItems();
-        filmList.stream()
-                .filter(film -> filmDbService.findByKinopoiskId(film.getKinopoiskId()) == null)
-                .forEach(film -> filmDbService.addFilm(film));
+    @Autowired
+    private MailService mailService;
 
-        return new ResponseEntity<>(filmList,HttpStatus.OK);
-    }
     @GetMapping(value = "/search")
     public ResponseEntity getFilms(@RequestParam(value = "c",defaultValue = "")String countries,
                                    @RequestParam(value = "g",defaultValue = "")String genres,
@@ -45,12 +46,25 @@ public class FilmsRestController {
                                    @RequestParam(value = "yT",defaultValue = "")String yearTo,
                                    @RequestParam(value = "i",defaultValue = "")String imdbId,
                                    @RequestParam(value = "k",defaultValue = "")String keyword,
-                                   @RequestParam(value = "p",defaultValue = "1")String page){
+                                   @RequestParam(value = "p",defaultValue = "1")String page) throws JAXBException {
         List<Film> filmList = filmSearchService.getFilms(countries,genres,order,type,ratingFrom,
                 ratingTo,yearFrom,yearTo,imdbId,keyword,page).getItems();
-        filmList.stream()
+        StringWriter writer = new StringWriter();
+        JAXBContext context = JAXBContext.newInstance(Films.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        List<Film> filteredFilms = filmList.stream()
                 .filter(film -> filmDbService.findByKinopoiskId(film.getKinopoiskId()) == null)
-                .forEach(film -> filmDbService.addFilm(film));
+                .collect(Collectors.toList());
+        filmDbService.addFilms(filteredFilms);
+        Films xmlFilms = new Films();
+        xmlFilms.setItems(filteredFilms);
+        marshaller.marshal(xmlFilms,writer);
+        String result = writer.toString();
+        if(filteredFilms.isEmpty() != true) {
+            mailService.sendSimpleEmail("programmtest97@gmail.com", "test", result);
+        }
+
 
         return new ResponseEntity<>(filmList,HttpStatus.OK);
     }

@@ -1,10 +1,12 @@
 package com.example.kinopoisk.model;
 
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 
-
-
+@XmlType(name = "film")
+@XmlRootElement
 @Entity
 @Table(name = "films")
 public class Film {
