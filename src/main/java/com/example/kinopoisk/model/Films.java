@@ -7,15 +7,15 @@ import java.util.List;
 @XmlType(name = "films")
 @XmlRootElement
 public class Films {
-    private List<Film> items;
+    private List<FilmDto> items;
     public Films(){
     }
-    public List<Film> getItems() {
+    public List<FilmDto> getItems() {
         return items;
     }
 
 
-    public void setItems(List<Film> items) {
+    public void setItems(List<FilmDto> items) {
         this.items = items;
     }
 

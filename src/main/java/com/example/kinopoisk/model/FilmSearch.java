@@ -1,8 +1,10 @@
 package com.example.kinopoisk.model;
 
 public class FilmSearch {
-    private Integer country;
-    private Integer genre;
+    private Integer countries;
+    private Integer genres;
+    private String order;
+    private String type;
     private Double ratingFrom;
     private Double ratingTo;
     private Integer yearFrom;
@@ -11,20 +13,20 @@ public class FilmSearch {
     private String keyword;
     private Integer page;
 
-    public Integer getCountry() {
-        return country;
+    public Integer getCountries() {
+        return countries;
     }
 
-    public void setCountry(Integer country) {
-        this.country = country;
+    public void setCountries(Integer countries) {
+        this.countries = countries;
     }
 
-    public Integer getGenre() {
-        return genre;
+    public Integer getGenres() {
+        return genres;
     }
 
-    public void setGenre(Integer genre) {
-        this.genre = genre;
+    public void setGenres(Integer genres) {
+        this.genres = genres;
     }
 
     public Double getRatingFrom() {
@@ -83,5 +85,19 @@ public class FilmSearch {
         this.page = page;
     }
 
+    public String getOrder() {
+        return order;
+    }
 
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

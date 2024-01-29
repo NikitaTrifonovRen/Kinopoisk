@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlRootElement
 @Entity
 @Table(name = "films")
-public class Film {
+public class FilmEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
@@ -24,7 +24,7 @@ public class Film {
     private double ratingKinopoisk;
     @Column(name = "description")
     private String description;
-    public Film(){
+    public FilmEntity(){
     }
 
     public Long getKinopoiskId() {

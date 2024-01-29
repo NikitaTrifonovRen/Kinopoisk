@@ -1,105 +1,37 @@
 package com.example.kinopoisk.controller;
 
-import com.example.kinopoisk.model.Film;
-import com.example.kinopoisk.model.Films;
-import com.example.kinopoisk.service.FilmDbService;
-import com.example.kinopoisk.service.FilmSearchService;
-import com.example.kinopoisk.service.MailService;
-import jakarta.xml.bind.JAXBContext;
+import com.example.kinopoisk.model.FilmDto;
+import com.example.kinopoisk.model.FilmSearch;
+import com.example.kinopoisk.service.FilmDbServiceImpl;
+import com.example.kinopoisk.service.FilmSearchServiceImpl;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.StringWriter;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
 
 public class FilmsRestController {
     @Autowired
-    private FilmSearchService filmSearchService;
+    private FilmSearchServiceImpl filmSearchServiceImpl;
     @Autowired
-    private FilmDbService filmDbService;
-    @Autowired
-    private MailService mailService;
+    private FilmDbServiceImpl filmDbServiceImpl;
 
-    @GetMapping(value = "/search")
-    public ResponseEntity getFilms(@RequestParam(value = "c",defaultValue = "")String countries,
-                                   @RequestParam(value = "g",defaultValue = "")String genres,
-                                   @RequestParam(value = "o",defaultValue = "RATING")String order,
-                                   @RequestParam(value = "t",defaultValue = "ALL")String type,
-                                   @RequestParam(value = "rF",defaultValue = "0")String ratingFrom,
-                                   @RequestParam(value = "rT",defaultValue = "10")String ratingTo,
-                                   @RequestParam(value = "yF",defaultValue = "")String yearFrom,
-                                   @RequestParam(value = "yT",defaultValue = "")String yearTo,
-                                   @RequestParam(value = "i",defaultValue = "")String imdbId,
-                                   @RequestParam(value = "k",defaultValue = "")String keyword,
-                                   @RequestParam(value = "p",defaultValue = "1")String page) throws JAXBException {
-        List<Film> filmList = filmSearchService.getFilms(countries,genres,order,type,ratingFrom,
-                ratingTo,yearFrom,yearTo,imdbId,keyword,page).getItems();
-        StringWriter writer = new StringWriter();
-        JAXBContext context = JAXBContext.newInstance(Films.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        List<Film> filteredFilms = filmList.stream()
-                .filter(film -> filmDbService.findByKinopoiskId(film.getKinopoiskId()) == null)
-                .collect(Collectors.toList());
-        filmDbService.addFilms(filteredFilms);
-        Films xmlFilms = new Films();
-        xmlFilms.setItems(filteredFilms);
-        marshaller.marshal(xmlFilms,writer);
-        String result = writer.toString();
-        if(filteredFilms.isEmpty() != true) {
-            mailService.sendSimpleEmail("programmtest97@gmail.com", "test", result);
-        }
-
-
-        return new ResponseEntity<>(filmList,HttpStatus.OK);
+    @PostMapping(value = "/search")
+    public ResponseEntity getFilms(@RequestBody FilmSearch params) {
+        return new ResponseEntity<>(filmSearchServiceImpl.getFilms(params),HttpStatus.OK);
     }
+    @PostMapping("/save")
+    public ResponseEntity saveNewFilm(@RequestBody FilmSearch params) throws JAXBException {
+        return new ResponseEntity<>(filmSearchServiceImpl.saveNewFilms(params),HttpStatus.OK);
+    }
+
     @GetMapping(value = "/base")
-    public List<Film> showFilmInDb(@RequestParam(value = "o",defaultValue = "ratingKinopoisk")String order,
-                                   @RequestParam(value = "pS",defaultValue = "1") int pageSize,
-                                   @RequestParam(value = "rF",defaultValue = "0")double ratingFrom,
-                                   @RequestParam(value = "rT",defaultValue = "10")double ratingTo,
-                                   @RequestParam(value = "yF",defaultValue = "0")int yearFrom,
-                                   @RequestParam(value = "yT",defaultValue = "3000")int yearTo,
-                                   @RequestParam(value = "i",required = false)Long kinopoiskId,
-                                   @RequestParam(value = "k",required = false)String keyword,
-                                   @RequestParam(value = "p",defaultValue = "1")int page){
-        List<Film> DbFilms;
-        Optional<Long> checkId = Optional.ofNullable(kinopoiskId);
-        Optional<String> checkKeyword = Optional.ofNullable(keyword);
-        Pageable pageable = PageRequest.of(page,pageSize, Sort.by(order).descending());
-
-        if(checkId.isPresent() & checkKeyword.isPresent()) {
-
-            DbFilms = filmDbService.findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetweenAndKinopoiskId(keyword,
-                    ratingFrom, ratingTo, yearFrom, yearTo, kinopoiskId);
-        }
-        else if(checkId.isPresent()){
-            DbFilms = filmDbService.findByRatingKinopoiskBetweenAndYearBetweenAndKinopoiskId(ratingFrom,
-                    ratingTo, yearFrom, yearTo, kinopoiskId);
-        }
-        else if(checkKeyword.isPresent()){
-            DbFilms = filmDbService.findByNameRuContainingAndRatingKinopoiskBetweenAndYearBetween(keyword, pageable,
-                    ratingFrom,ratingTo,yearFrom,yearTo);
-        }
-        else {
-            DbFilms = filmDbService.findByRatingKinopoiskBetweenAndYearBetween(ratingFrom,ratingTo,yearFrom,yearTo,
-                    pageable);
-        }
-        return  DbFilms;
+    public List<FilmDto> showFilmInDb(@RequestBody FilmSearch params){
+        return filmDbServiceImpl.getFilmsFromDb(params);
     }
 }
