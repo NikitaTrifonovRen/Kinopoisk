@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface FilmDbService {
-    void addFilms(List<FilmEntity> films);
+    List<FilmEntity> addFilms(List<FilmEntity> films);
     FilmEntity findByKinopoiskId(Long kinopoiskId);
 
     List<FilmEntity> findByRatingKinopoiskBetweenAndYearBetween(

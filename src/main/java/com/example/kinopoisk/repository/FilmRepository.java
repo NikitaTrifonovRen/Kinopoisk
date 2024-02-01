@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface FilmDao extends JpaRepository<FilmEntity, Long> {
+public interface FilmRepository extends JpaRepository<FilmEntity, Long> {
     FilmEntity findByKinopoiskId(Long kinopoiskId);
     List<FilmEntity> findByRatingKinopoiskBetweenAndYearBetween(
             double ratingFrom,

@@ -4,7 +4,7 @@ import com.example.kinopoisk.mapper.FilmsMapper;
 import com.example.kinopoisk.model.FilmDto;
 import com.example.kinopoisk.model.FilmEntity;
 import com.example.kinopoisk.model.FilmSearch;
-import com.example.kinopoisk.repository.FilmDao;
+import com.example.kinopoisk.repository.FilmRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -18,16 +18,16 @@ import java.util.Optional;
 @Service
 public class FilmDbServiceImpl implements FilmDbService {
     @Autowired
-    private FilmDao filmDao;
+    private FilmRepository filmRepository;
     @Autowired
     private FilmsMapper filmsMapper;
     @Transactional
-    public void addFilms(List<FilmEntity> films) {
-        filmDao.saveAll(films);
+    public List<FilmEntity> addFilms(List<FilmEntity> films) {
+        return filmRepository.saveAll(films);
     }
     @Transactional
     public FilmEntity findByKinopoiskId(Long kinopoiskId) {
-        return filmDao.findByKinopoiskId(kinopoiskId);
+        return filmRepository.findByKinopoiskId(kinopoiskId);
     }
     @Transactional
     public List<FilmEntity> findByRatingKinopoiskBetweenAndYearBetween(
@@ -36,7 +36,7 @@ public class FilmDbServiceImpl implements FilmDbService {
             int yearFrom,
             int yearTo,
             Pageable pageable) {
-        return filmDao.findByRatingKinopoiskBetweenAndYearBetween(ratingFrom,
+        return filmRepository.findByRatingKinopoiskBetweenAndYearBetween(ratingFrom,
                 ratingTo, yearFrom, yearTo, pageable);
     }
 
@@ -48,7 +48,7 @@ public class FilmDbServiceImpl implements FilmDbService {
             int yearTo,
             String nameRu,
             Pageable pageable){
-        return filmDao.findByRatingKinopoiskBetweenAndYearBetweenAndNameRuContaining(ratingFrom,ratingTo,yearFrom,yearTo,nameRu,pageable);
+        return filmRepository.findByRatingKinopoiskBetweenAndYearBetweenAndNameRuContaining(ratingFrom,ratingTo,yearFrom,yearTo,nameRu,pageable);
     }
     @Transactional
     public List<FilmDto> getFilmsFromDb(FilmSearch params){
@@ -94,11 +94,11 @@ public class FilmDbServiceImpl implements FilmDbService {
         }
 
         if(checkKeyword.isPresent()){
-            DbFilms = filmDao.findByRatingKinopoiskBetweenAndYearBetweenAndNameRuContaining(ratingFrom,
+            DbFilms = filmRepository.findByRatingKinopoiskBetweenAndYearBetweenAndNameRuContaining(ratingFrom,
                     ratingTo,yearFrom,yearTo,nameRu,pageable);
         }
         else {
-            DbFilms = filmDao.findByRatingKinopoiskBetweenAndYearBetween(ratingFrom,ratingTo,yearFrom,yearTo,pageable);
+            DbFilms = filmRepository.findByRatingKinopoiskBetweenAndYearBetween(ratingFrom,ratingTo,yearFrom,yearTo,pageable);
         }
         DbFilmsToShow = filmsMapper.toDtos(DbFilms);
 
